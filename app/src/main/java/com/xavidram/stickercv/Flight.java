@@ -1,5 +1,6 @@
 package com.xavidram.stickercv;
 
+import android.content.Intent;
 import android.graphics.SurfaceTexture;
 import android.os.Handler;
 import android.os.Looper;
@@ -37,6 +38,7 @@ public class Flight extends AppCompatActivity implements TextureView.SurfaceText
     private static final String TAG = Flight.class.getName();
     private Button btn_flight_start;
     protected TextureView mVideoSurface;
+    private String RoutineName;
 
     //DJI Variables
     protected DJIMission mDJIMission;
@@ -56,6 +58,10 @@ public class Flight extends AppCompatActivity implements TextureView.SurfaceText
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_flight);
+
+        RoutineName = getIntent().getExtras().getString("RoutineName");
+
+
 
         initUI();
 

@@ -72,7 +72,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     filename = routineSpinner.getSelectedItem().toString();
                     Intent intent = new Intent(this, Flight.class);
                     //pass it to next activity as extra
-                    intent.putExtra("RoutineName",filename+".txt");
+                    intent.putExtra("RoutineName",filename);
                     //gogoshing!!
                     startActivity(intent);
                 }catch(Exception e) {
