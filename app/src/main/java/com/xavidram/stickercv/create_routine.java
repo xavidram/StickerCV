@@ -117,6 +117,7 @@ public class create_routine extends AppCompatActivity implements View.OnClickLis
 
         cr_btn_addCoordinate.setOnClickListener(this);
         cr_btn_Done.setOnClickListener(this);
+        cr_btn_Done.setEnabled(false);
         cr_btn_clearCoordinates.setOnClickListener(this);
     }
 
@@ -127,10 +128,12 @@ public class create_routine extends AppCompatActivity implements View.OnClickLis
             case R.id.cr_btn_addCoordinate:
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, locationListener);
                 //Toast.makeText(create_routine.this, "Coordinate Button Clicked", Toast.LENGTH_SHORT).show();
+                cr_btn_Done.setEnabled(true);
                 break;
             case R.id.cr_btn_clearCoordinates:
                 coordView.setText("Coordinates:"); //reset textview to no appended text
                 GPSCoordinates.clear(); //remove all coordinates if there
+                cr_btn_Done.setEnabled(false);
                 break;
             case R.id.cr_btn_Done:
                 try {
