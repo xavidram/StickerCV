@@ -29,6 +29,7 @@ import android.widget.Toast;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -156,14 +157,14 @@ public class create_routine extends AppCompatActivity implements View.OnClickLis
                     //specify the input type
                     fileNameBox.setInputType(InputType.TYPE_CLASS_TEXT);
                     builder.setView(fileNameBox);
-
                     //set up the buttons
                     builder.setPositiveButton("OK",  new DialogInterface.OnClickListener() {
                        @Override
                         public void onClick(DialogInterface dialog, int which){
                            fileName = fileNameBox.getText().toString(); //this is what we will name the file
                            try {
-                               File newRoutine = new File(Environment.getExternalStorageDirectory().getPath()+fileName+".txt");
+                               File newRoutine = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),fileName+".txt");
+                               newRoutine.setExecutable(true);
                                newRoutine.createNewFile();
                                PrintWriter output = new PrintWriter(new FileWriter(newRoutine));
                                for(GPScoord c : GPSCoordinates){
@@ -177,7 +178,7 @@ public class create_routine extends AppCompatActivity implements View.OnClickLis
 
                        }
                     });
-                    builder.setPositiveButton("Cancle",  new DialogInterface.OnClickListener() {
+                    /*builder.setPositiveButton("Cancel",  new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which){
                             GPSCoordinates.remove(GPSCoordinates.size() - 1); //pop last item
@@ -185,7 +186,7 @@ public class create_routine extends AppCompatActivity implements View.OnClickLis
                             dialog.cancel();
                         }
                     });
-
+                    */
                     //lets now show the dialoug box
                     builder.show();
 

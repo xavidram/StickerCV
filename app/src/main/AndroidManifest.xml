@@ -44,9 +44,10 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
+        android:name= ".FPVDemoApplication"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
-        android:label=""
+        android:icon="@mipmap/falcon"
+        android:label="GPSFlightML"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 

@@ -25,12 +25,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     //files reader class
     private appFileManager fileManager;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         initEntities();
 
     }
@@ -43,9 +41,11 @@ public class MainActivity extends Activity implements View.OnClickListener {
         //spinner
         routineSpinner = (Spinner) findViewById(R.id.ma_RoutineSpinner);
 
+
+
         //--populate spinner with names of routines--\\
         try {
-            fileManager = new appFileManager(new File(Environment.getExternalStorageDirectory().getPath() ));
+            fileManager = new appFileManager(new File(String.valueOf(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM))));
             //get names of file paths
             Routines = fileManager.getListFileNames();
             //create the adapter for the spinner

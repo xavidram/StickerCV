@@ -180,7 +180,8 @@ public class Flight extends AppCompatActivity implements TextureView.SurfaceText
         //go grab the file
         try {
             //grab the file
-            fileManager = new appFileManager(new File(Environment.getExternalStorageDirectory().getPath()));
+
+            fileManager = new appFileManager(new File(String.valueOf(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM))));
             RoutineName = getIntent().getExtras().getString("RoutineName");
             routineFile = fileManager.getFile(RoutineName);
 
