@@ -44,8 +44,8 @@ public class create_routine extends AppCompatActivity implements View.OnClickLis
     protected LocationManager locationManager;
     double latitude, longitude;
     boolean isGPSEnabled, isNetworkEnabled, canGetLocation = false;
-    private static final long Min_Distance_Between_GPS_Updates = 1; //1 meter
-    private static final long Min_Time_Between_GPS_Updates = 1000; //1 second or 1000 ms
+    private static final long Min_Distance_Between_GPS_Updates = 5; //1 meter
+    private static final long Min_Time_Between_GPS_Updates = 5000; //1 second or 1000 ms
     private ArrayList<GPScoord> GPSCoordinates;
     private boolean toMain = false;
     //
@@ -131,7 +131,7 @@ public class create_routine extends AppCompatActivity implements View.OnClickLis
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.cr_btn_addCoordinate:
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, locationListener);
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 10, locationListener);
                 //Toast.makeText(create_routine.this, "Coordinate Button Clicked", Toast.LENGTH_SHORT).show();
                 cr_btn_Done.setEnabled(true);
                 break;

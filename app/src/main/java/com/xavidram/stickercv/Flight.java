@@ -177,6 +177,8 @@ public class Flight extends AppCompatActivity implements TextureView.SurfaceText
     }
 
     private void initUI() {
+        //initialize gpscoord
+        GPSCoordinates = new ArrayList<GPScoord>();
         //go grab the file
         try {
             //grab the file
@@ -185,25 +187,26 @@ public class Flight extends AppCompatActivity implements TextureView.SurfaceText
             RoutineName = getIntent().getExtras().getString("RoutineName");
             routineFile = fileManager.getFile(RoutineName);
 
-            //parse the file into a gpscoord datastructure
-            StringBuilder stringParser = new StringBuilder();
-
+           //parse the file
             try {
+
                 BufferedReader br = new BufferedReader(new FileReader(routineFile));
                 String line;
-
                 while ((line = br.readLine()) != null){
                     String[] separated = line.split(",");
                     GPScoord coord = new GPScoord(Double.parseDouble(separated[0]),Double.parseDouble(separated[1].trim()));
+
                     GPSCoordinates.add(coord);
                 }
                 br.close();
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+
 
         // init mVideoSurface
         mVideoSurface = (TextureView)findViewById(R.id.mVideoSurface);
