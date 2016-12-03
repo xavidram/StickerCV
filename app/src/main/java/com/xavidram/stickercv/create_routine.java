@@ -46,6 +46,7 @@ public class create_routine extends AppCompatActivity implements View.OnClickLis
     private static final long Min_Distance_Between_GPS_Updates = 1; //1 meter
     private static final long Min_Time_Between_GPS_Updates = 1000; //1 second or 1000 ms
     private ArrayList<GPScoord> GPSCoordinates;
+    private boolean toMain = false;
     //
 
 
@@ -139,6 +140,7 @@ public class create_routine extends AppCompatActivity implements View.OnClickLis
                 cr_btn_Done.setEnabled(false);
                 break;
             case R.id.cr_btn_Done:
+                toMain = false;
                 try {
                     //get first item and put it at end of gps list so drone returns to initial location
                     GPSCoordinates.add(GPSCoordinates.get(0));
@@ -168,22 +170,32 @@ public class create_routine extends AppCompatActivity implements View.OnClickLis
                                    output.println(c.cordsToString());
                                }
                                output.close();
+                               toMain = true;
                            }catch (Exception e){
                                e.printStackTrace();
                            }
 
                        }
                     });
-                    builder.setPositiveButton("OK",  new DialogInterface.OnClickListener() {
+                    builder.setPositiveButton("Cancle",  new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which){
                             GPSCoordinates.remove(GPSCoordinates.size() - 1); //pop last item
+                            toMain = false;
                             dialog.cancel();
                         }
                     });
 
                     //lets now show the dialoug box
                     builder.show();
+
+                    if(toMain){
+                        //return to mainactivity
+                        Intent i = new Intent(this, MainActivity.class);
+                        startActivity(i);
+                    }else {
+                        toMain = false;
+                    }
 
                 } catch (ArrayIndexOutOfBoundsException e){
                     //array out of bounds when there is no coordinates added
