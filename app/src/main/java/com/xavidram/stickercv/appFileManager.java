@@ -12,7 +12,7 @@ import java.util.List;
 
 public class appFileManager extends Application{
 
-    File parentDIR;
+    private File parentDIR;
 
     public appFileManager(File parentDIR){
         this.parentDIR = parentDIR;
@@ -26,6 +26,31 @@ public class appFileManager extends Application{
                 inFiles.add(f);
 
         return inFiles;
+    }
+
+    public ArrayList<String> getRoutineNames(List<File> routines) {
+        ArrayList<String> routeNames = new ArrayList<String>();
+        for (File r : routines) {
+            routeNames.add(r.getName());
+        }
+        return routeNames;
+    }
+
+    public ArrayList<String> getListFileNames() {
+        ArrayList<String> fileNames = new ArrayList<String>();
+        File[] files = parentDIR.listFiles();
+        for (File f: files)
+            if (f.getName().endsWith("txt"))
+                fileNames.add(f.getName());
+        return fileNames;
+    }
+
+    public File getFile(String filename) {
+        ArrayList<File> inFiles = getListFiles();
+        for (File f : inFiles)
+            if (f.getName().equals(filename))
+                return f;
+        return null;
     }
 
 }

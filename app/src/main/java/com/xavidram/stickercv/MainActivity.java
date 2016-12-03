@@ -20,10 +20,11 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     private Button mRunRoutine, mCreateRoutine, mEditRoutine;
     private Spinner routineSpinner;
-    private List<File> routines;
     private ArrayList<String> Routines;
     private ArrayAdapter<String> spinnerAdapter;
 
+    //files reader class
+    private appFileManager fileManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,10 +43,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
         //--populate spinner with names of routines--\\
         try {
-            //go grab the routines from storage
-            routines = getListFiles(new File(Environment.getExternalStorageDirectory().getPath()));
-            //put filenames into array list for spinner, just names
-            Routines = getRoutineNames(routines);
+            fileManager = new appFileManager(new File(Environment.getExternalStorageDirectory().getPath() ));
+            //get names of file paths
+            Routines = fileManager.getListFileNames();
             //create the adapter for the spinner
             spinnerAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, Routines);
             //populate the spinner

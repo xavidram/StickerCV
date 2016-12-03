@@ -2,6 +2,7 @@ package com.xavidram.stickercv;
 
 import android.content.Intent;
 import android.graphics.SurfaceTexture;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
@@ -15,11 +16,18 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 import dji.common.camera.CameraSystemState;
 import dji.common.camera.DJICameraSettingsDef;
 import dji.common.error.DJIError;
+import dji.common.gimbal.DJIGimbalAngleRotation;
+import dji.common.gimbal.DJIGimbalRotateAngleMode;
+import dji.common.gimbal.DJIGimbalRotateDirection;
 import dji.common.product.Model;
 import dji.common.util.DJICommonCallbacks;
 import dji.sdk.base.DJIBaseProduct;
@@ -29,8 +37,14 @@ import dji.sdk.flightcontroller.DJIFlightController;
 import dji.sdk.missionmanager.DJICustomMission;
 import dji.sdk.missionmanager.DJIMission;
 import dji.sdk.missionmanager.DJIMissionManager;
+import dji.sdk.missionmanager.missionstep.DJIAircraftYawStep;
+import dji.sdk.missionmanager.missionstep.DJIGimbalAttitudeStep;
 import dji.sdk.missionmanager.missionstep.DJIGoHomeStep;
+import dji.sdk.missionmanager.missionstep.DJIGoToStep;
 import dji.sdk.missionmanager.missionstep.DJIMissionStep;
+import dji.sdk.missionmanager.missionstep.DJIShootPhotoStep;
+import dji.sdk.missionmanager.missionstep.DJIStartRecordVideoStep;
+import dji.sdk.missionmanager.missionstep.DJIStopRecordVideoStep;
 import dji.sdk.missionmanager.missionstep.DJITakeoffStep;
 
 public class Flight extends AppCompatActivity implements TextureView.SurfaceTextureListener, View.OnClickListener {
@@ -48,6 +62,9 @@ public class Flight extends AppCompatActivity implements TextureView.SurfaceText
     protected ProgressBar mPB;
     protected DJICamera.CameraReceivedVideoDataCallback mReceivedVideoDataCallBack = null;
     private TextView recordingTime;
+    private appFileManager fileManager;
+    private File routineFile;
+    private ArrayList<GPScoord> GPSCoordinates;
 
     // Codec for video live view
     protected DJICodecManager mCodecManager = null;
@@ -58,10 +75,6 @@ public class Flight extends AppCompatActivity implements TextureView.SurfaceText
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_flight);
-
-        RoutineName = getIntent().getExtras().getString("RoutineName");
-
-
 
         initUI();
 
@@ -164,6 +177,33 @@ public class Flight extends AppCompatActivity implements TextureView.SurfaceText
     }
 
     private void initUI() {
+        //go grab the file
+        try {
+            //grab the file
+            fileManager = new appFileManager(new File(Environment.getExternalStorageDirectory().getPath()));
+            RoutineName = getIntent().getExtras().getString("RoutineName");
+            routineFile = fileManager.getFile(RoutineName);
+
+            //parse the file into a gpscoord datastructure
+            StringBuilder stringParser = new StringBuilder();
+
+            try {
+                BufferedReader br = new BufferedReader(new FileReader(routineFile));
+                String line;
+
+                while ((line = br.readLine()) != null){
+                    String[] separated = line.split(",");
+                    GPScoord coord = new GPScoord(Double.parseDouble(separated[0]),Double.parseDouble(separated[1].trim()));
+                    GPSCoordinates.add(coord);
+                }
+                br.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         // init mVideoSurface
         mVideoSurface = (TextureView)findViewById(R.id.mVideoSurface);
 
@@ -252,6 +292,94 @@ public class Flight extends AppCompatActivity implements TextureView.SurfaceText
                 Toast.makeText(Flight.this, "Takeoff", Toast.LENGTH_SHORT).show();
             }
         });
+        DJIGimbalAttitudeStep attitudeStep = new DJIGimbalAttitudeStep(
+                DJIGimbalRotateAngleMode.AbsoluteAngle,
+                new DJIGimbalAngleRotation(true, 0f, DJIGimbalRotateDirection.Clockwise),
+                null,
+                null,
+                new DJICommonCallbacks.DJICompletionCallback() {
+                    @Override
+                    public void onResult(DJIError error) {
+                        //  Utils.setResultToToast(mContext, "Set gimbal attitude step: " + (error == null ? "Success" : error.getDescription()));
+                        Toast.makeText(Flight.this, "Attitude ABSOLUTE :O! step: " + (error == null ? "Success" : error.getDescription()), Toast.LENGTH_SHORT).show();
+
+                    }
+                });
+
+        //Step 3: Go 10 meters from home point
+        DJIGoToStep SpeedAndGo = new DJIGoToStep(26.2051762, -98.2838191, 2, new DJICommonCallbacks.DJICompletionCallback() {
+
+            @Override
+            public void onResult(DJIError error) {
+                //    Utils.setResultToToast(mContext, "Goto step: " + (error == null ? "Success" : error.getDescription()));
+                Toast.makeText(Flight.this, "Speed 1 step: " + (error == null ? "Success" : error.getDescription()), Toast.LENGTH_SHORT).show();
+
+            }
+        });
+        SpeedAndGo.setFlightSpeed(1 / 2);
+
+        DJIGoToStep SpeedAndGo2 = new DJIGoToStep(26.2051762, -98.2839248, 2, new DJICommonCallbacks.DJICompletionCallback() {
+
+            @Override
+            public void onResult(DJIError error) {
+                //  Utils.setResultToToast(mContext, "Goto step: " + (error == null ? "Success" : error.getDescription()));
+                Toast.makeText(Flight.this, "Speed 2 step: " + (error == null ? "Success" : error.getDescription()), Toast.LENGTH_SHORT).show();
+
+            }
+        });
+        SpeedAndGo2.setFlightSpeed(1 / 2);
+        DJIGimbalAttitudeStep CameraAngle = new DJIGimbalAttitudeStep(
+                DJIGimbalRotateAngleMode.RelativeAngle,
+                new DJIGimbalAngleRotation(true, 20, DJIGimbalRotateDirection.Clockwise),
+                null,
+                null,
+                new DJICommonCallbacks.DJICompletionCallback() {
+                    @Override
+                    public void onResult(DJIError error) {
+                        // Utils.setResultToToast(mContext, "Set gimbal attitude step: " + (error == null ? "Success" : error.getDescription()));
+                        Toast.makeText(Flight.this, "Gimbal 1 step: " + (error == null ? "Success" : error.getDescription()), Toast.LENGTH_SHORT).show();
+
+                    }
+                });
+        DJIGimbalAttitudeStep CameraAngle2 = new DJIGimbalAttitudeStep(
+                DJIGimbalRotateAngleMode.RelativeAngle,
+                new DJIGimbalAngleRotation(true, 45, DJIGimbalRotateDirection.CounterClockwise),
+                null,
+                null,
+                new DJICommonCallbacks.DJICompletionCallback() {
+                    @Override
+                    public void onResult(DJIError error) {
+                        //  Utils.setResultToToast(mContext, "Set gimbal attitude step: " + (error == null ? "Success" : error.getDescription()));
+                        Toast.makeText(Flight.this, "Gimbal 2 step: " + (error == null ? "Success" : error.getDescription()), Toast.LENGTH_SHORT).show();
+
+                    }
+                });
+        DJIShootPhotoStep Photo1 = new DJIShootPhotoStep(new DJICommonCallbacks.DJICompletionCallback() {
+
+            @Override
+            public void onResult(DJIError error) {
+                //Utils.setResultToToast(mContext, "Take single photo step: " + (error == null ? "Success" : error.getDescription()));
+                Toast.makeText(Flight.this, "Photo step: " + (error == null ? "Success" : error.getDescription()), Toast.LENGTH_SHORT).show();
+
+            }
+        });
+        DJIAircraftYawStep YawMove = new DJIAircraftYawStep(90, 20, new DJICommonCallbacks.DJICompletionCallback() {
+            @Override
+            public void onResult(DJIError error) {
+                // Utils.setResultToToast(mContext, "Take single photo step: " + (error == null ? "Success" : error.getDescription()));
+                Toast.makeText(Flight.this, "Yawstep: " + (error == null ? "Success" : error.getDescription()), Toast.LENGTH_SHORT).show();
+
+            }
+        });
+        DJIAircraftYawStep YawMove2 = new DJIAircraftYawStep(-180, 20, new DJICommonCallbacks.DJICompletionCallback() {
+            @Override
+            public void onResult(DJIError error) {
+                //  Utils.setResultToToast(mContext, "Take single photo step: " + (error == null ? "Success" : error.getDescription()));
+                Toast.makeText(Flight.this, "Yaw Step 2: " + (error == null ? "Success" : error.getDescription()), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
         DJIGoHomeStep goinghome = new DJIGoHomeStep(new DJICommonCallbacks.DJICompletionCallback() {
 
             @Override
@@ -259,8 +387,31 @@ public class Flight extends AppCompatActivity implements TextureView.SurfaceText
                 Toast.makeText(Flight.this, "Landing", Toast.LENGTH_SHORT).show();
             }
         });
-
+        DJIStartRecordVideoStep videoStarts = new DJIStartRecordVideoStep(new DJICommonCallbacks.DJICompletionCallback(){
+            public void onResult(DJIError error){
+                Toast.makeText(Flight.this, "RecordingVideo", Toast.LENGTH_SHORT).show();
+            }
+        });
+        DJIStopRecordVideoStep videoStops = new DJIStopRecordVideoStep(new DJICommonCallbacks.DJICompletionCallback() {
+            @Override
+            public void onResult(DJIError djiError) {
+                Toast.makeText(Flight.this, "Stoping Video", Toast.LENGTH_SHORT).show();
+            }
+        });
         steps.add(takingoff);
+
+        for(int i=0; i<GPSCoordinates.size();i++) {
+            steps.add(new DJIGoToStep(GPSCoordinates.get(i).latitudeAsDouble(), GPSCoordinates.get(i).longitudeAsDouble(), 2, new DJICommonCallbacks.DJICompletionCallback() {
+
+                @Override
+                public void onResult(DJIError error) {
+                    //    Utils.setResultToToast(mContext, "Goto step: " + (error == null ? "Success" : error.getDescription()));
+                    Toast.makeText(Flight.this, "Speed 1 step: " + (error == null ? "Success" : error.getDescription()), Toast.LENGTH_SHORT).show();
+
+                }
+            }));
+        }
+
         steps.add(goinghome);
 
 
@@ -313,20 +464,21 @@ public class Flight extends AppCompatActivity implements TextureView.SurfaceText
         switch (v.getId()) {
             //PREPARE
             case R.id.btn_flight_start:{
-                //   Thread.sleep(100);
-                Toast.makeText(Flight.this, "i am here", Toast.LENGTH_SHORT).show();
+                //lets start the mission
+                mMissionManager = DJIMissionManager.getInstance();
                 mDJIMission = initMission();
-                if (mDJIMission == null) {
-                    Toast.makeText(Flight.this, "choose a mission type", Toast.LENGTH_SHORT).show();
-                }mMissionManager.prepareMission(mDJIMission, new DJIMission.DJIMissionProgressHandler() {
+                if(mDJIMission == null)
+                    Toast.makeText(Flight.this, "Mission error: 1", Toast.LENGTH_SHORT).show();
+
+                mMissionManager.prepareMission(mDJIMission, new DJIMission.DJIMissionProgressHandler() {
 
                             @Override
                             public void onProgress(DJIMission.DJIProgressType type, float progress) {
-                                setProgressBar((int)(progress * 100f));
+                                setProgressBar((int) (progress * 100f));
                             }
 
                         }
-                        ,new DJICommonCallbacks.DJICompletionCallback() {
+                        , new DJICommonCallbacks.DJICompletionCallback() {
                             @Override
                             public void onResult(DJIError error) {
                                 if (error == null) {
@@ -336,6 +488,26 @@ public class Flight extends AppCompatActivity implements TextureView.SurfaceText
                                 }
                             }
                         });
+                // break;
+                if (mDJIMission != null) {
+                    mMissionManager.setMissionExecutionFinishedCallback(new DJICommonCallbacks.DJICompletionCallback() {
+
+                        @Override
+                        public void onResult(DJIError error) {
+                            Toast.makeText(Flight.this, "Success", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+                //  else{Toast.makeText(MainActivity.this, "DJIMission is NULL D:", Toast.LENGTH_SHORT).show();}
+                //For the panorama mission, there will be no callback in some cases, we will fix it in next version.
+                mMissionManager.startMissionExecution(new DJICommonCallbacks.DJICompletionCallback() {
+
+                    @Override
+                    public void onResult(DJIError mError) {
+                        //Toast.makeText(MainActivity.this, "Start: " + mError.getDescription(), Toast.LENGTH_SHORT).show();
+
+                    }
+                });
                 break;
             }
             default:
