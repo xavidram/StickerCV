@@ -23,7 +23,7 @@ public class ConnectionActivity extends Activity implements View.OnClickListener
 
     private TextView mTextConnectionStatus;
     private TextView mTextProduct;
-    private Button mBtnOpen;
+    private Button mBtnOpen, ma_btn_bypass;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,11 +87,14 @@ public class ConnectionActivity extends Activity implements View.OnClickListener
 
     private void initUI() {
 
+        ma_btn_bypass = (Button) findViewById(R.id.ca_btn_bypass);
+        ma_btn_bypass.setOnClickListener(this);
         mTextConnectionStatus = (TextView) findViewById(R.id.text_connection_status);
         mTextProduct = (TextView) findViewById(R.id.text_product_info);
         mBtnOpen = (Button) findViewById(R.id.btn_open);
         mBtnOpen.setOnClickListener(this);
         mBtnOpen.setEnabled(false);
+
 
     }
 
@@ -138,6 +141,10 @@ public class ConnectionActivity extends Activity implements View.OnClickListener
                 startActivity(intent);
                 break;
             }
+            case R.id.ca_btn_bypass:
+                Intent i = new Intent(this, MainActivity.class);
+                startActivity(i);
+                break;
             default:
                 break;
         }

@@ -74,4 +74,13 @@
         android:layout_marginTop="12dp"
         android:id="@+id/c_tv_OpenCvVersion" />
 
+    <Button
+        android:text="Bypass"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="22dp"
+        android:id="@+id/ca_btn_bypass"
+        android:layout_below="@+id/c_tv_Header"
+        android:layout_centerHorizontal="true" />
+
 </RelativeLayout>
