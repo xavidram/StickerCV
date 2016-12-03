@@ -36,12 +36,12 @@
         "source": "C:\\Users\\xavidram\\Desktop\\StickerCV\\dJISDKLIB\\build\\intermediates\\bundles\\debug\\res\\anim\\core_other.xml"
     },
     {
-        "merged": "C:\\Users\\xavidram\\Desktop\\StickerCV\\dJISDKLIB\\build\\intermediates\\res\\merged\\androidTest\\debug\\anim\\core_push_left_in.xml",
-        "source": "C:\\Users\\xavidram\\Desktop\\StickerCV\\dJISDKLIB\\build\\intermediates\\bundles\\debug\\res\\anim\\core_push_left_in.xml"
-    },
-    {
         "merged": "C:\\Users\\xavidram\\Desktop\\StickerCV\\dJISDKLIB\\build\\intermediates\\res\\merged\\androidTest\\debug\\anim\\core_push_left_out.xml",
         "source": "C:\\Users\\xavidram\\Desktop\\StickerCV\\dJISDKLIB\\build\\intermediates\\bundles\\debug\\res\\anim\\core_push_left_out.xml"
+    },
+    {
+        "merged": "C:\\Users\\xavidram\\Desktop\\StickerCV\\dJISDKLIB\\build\\intermediates\\res\\merged\\androidTest\\debug\\anim\\core_push_left_in.xml",
+        "source": "C:\\Users\\xavidram\\Desktop\\StickerCV\\dJISDKLIB\\build\\intermediates\\bundles\\debug\\res\\anim\\core_push_left_in.xml"
     },
     {
         "merged": "C:\\Users\\xavidram\\Desktop\\StickerCV\\dJISDKLIB\\build\\intermediates\\res\\merged\\androidTest\\debug\\anim\\core_push_right_in.xml",

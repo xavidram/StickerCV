@@ -17,6 +17,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.InputType;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -34,7 +35,7 @@ import java.util.ArrayList;
 
 public class create_routine extends AppCompatActivity implements View.OnClickListener{
 
-    private Button cr_btn_Done, cr_btn_addCoordinate, cr_btn_clearCoordinates;
+    private Button cr_btn_Done, cr_btn_addCoordinate, cr_btn_clearCoordinates, cr_btn_back;
     private TextView coordView;
     private String fileName = "";
     //GPS Variables
@@ -104,7 +105,9 @@ public class create_routine extends AppCompatActivity implements View.OnClickLis
     }
 
     private void initEntities(){
+
         //buttons
+        cr_btn_back = (Button) findViewById(R.id.cr_btn_back);
         cr_btn_addCoordinate = (Button)findViewById(R.id.cr_btn_addCoordinate);
         cr_btn_clearCoordinates = (Button)findViewById(R.id.cr_btn_clearCoordinates);
         cr_btn_Done = (Button)findViewById(R.id.cr_btn_Done);
@@ -114,7 +117,7 @@ public class create_routine extends AppCompatActivity implements View.OnClickLis
         GPSCoordinates = new ArrayList<GPScoord>();
         locationManager = (LocationManager)getSystemService(LOCATION_SERVICE);
 
-
+        cr_btn_back.setOnClickListener(this);
         cr_btn_addCoordinate.setOnClickListener(this);
         cr_btn_Done.setOnClickListener(this);
         cr_btn_Done.setEnabled(false);
@@ -187,6 +190,9 @@ public class create_routine extends AppCompatActivity implements View.OnClickLis
                     Toast.makeText(create_routine.this, "No Corrdinates yet in the list!", Toast.LENGTH_SHORT).show();
                 }
                 break;
+            case R.id.cr_btn_back:
+                Intent i = new Intent(this, MainActivity.class);
+                startActivity(i);
             default:
                 break;
         }
@@ -203,4 +209,5 @@ public class create_routine extends AppCompatActivity implements View.OnClickLis
                 return;
         }
     }
+
 }
